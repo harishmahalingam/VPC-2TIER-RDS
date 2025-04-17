@@ -10,7 +10,6 @@ module "ec2_instance" {
   subnet_id              = "subnet-eddcdzz4"
 
   tags = {
-    Terraform   = "true"
-    Environment = "dev"
+name = "EC2-WEBSERVER"
   }
 }
