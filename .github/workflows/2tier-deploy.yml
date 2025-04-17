@@ -29,6 +29,19 @@ jobs:
       - name: Terraform Plan
         run: terraform plan
 
+      - name: Install terraform-docs
+        run: |
+          curl -sSL https://github.com/terraform-docs/terraform-docs/releases/download/v0.16.0/terraform-docs-v0.16.0-linux-amd64.tar.gz | tar -xz
+          sudo mv terraform-docs /usr/local/bin/
+
+      - name: Generate Terraform Docs
+        run: terraform-docs markdown table . > README.md
+
+      - name: Upload README.md as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: terraform-docs
+          path: README.md
+
       - name: Terraform Apply
         run: terraform apply -auto-approve
-        #run: terraform destroy -auto-approve
