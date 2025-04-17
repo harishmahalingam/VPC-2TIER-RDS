@@ -37,11 +37,5 @@ jobs:
       - name: Generate Terraform Docs
         run: terraform-docs markdown table . > README.md
 
-      - name: Upload README.md as artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: terraform-docs
-          path: README.md
-
       - name: Terraform Apply
         run: terraform apply -auto-approve
