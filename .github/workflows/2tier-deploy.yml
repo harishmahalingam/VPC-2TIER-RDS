@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  terraform-alb:
+  IAC-2TIER-DEPLOY:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
