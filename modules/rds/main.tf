@@ -1,27 +1,37 @@
-variable "vpc_id" {
-  description = "ID of the VPC where the EC2 instance will be deployed"
-  type        = string
+resource "aws_db_subnet_group" "rds_subnet" {
+  name       = "rds-subnet-group"
+  subnet_ids = var.subnet_ids
 }
  
-variable "subnet_id" {
-  description = "ID of the public subnet for the EC2 instance"
-  type        = string
+resource "aws_db_instance" "db" {
+  allocated_storage    = 20
+  engine               = "mysql"
+  engine_version       = "8.0"
+  instance_class       = "db.t3.micro"
+#  name                 = "mydb"
+  username             = "admin"
+  password             = "MySecurePass123"
+  skip_final_snapshot  = true
+db_subnet_group_name = aws_db_subnet_group.rds_subnet.name
+vpc_security_group_ids = [aws_security_group.rds_sg.id]
 }
  
-variable "key_name" {
-  description = "Name of the existing EC2 Key Pair to enable SSH access"
-  type        = string
-  default     = "test-keypair"
-}
-
-variable "instance_type" {
-  description = "Name of the existing EC2 Key Pair to enable SSH access"
-  type        = string
-  default     = "t2.micro"
-}
-
-variable "ami_id" {
-  description = "ID of the public subnet for the EC2 instance"
-  type        = string
-  default     = "ami-084568db4383264d4"
+resource "aws_security_group" "rds_sg" {
+  name        = "rds-sg"
+  description = "Allow access from EC2"
+  vpc_id      = var.vpc_id
+ 
+  ingress {
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "tcp"
+cidr_blocks = ["10.0.1.0/24"] # Public subnet CIDR
+  }
+ 
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
