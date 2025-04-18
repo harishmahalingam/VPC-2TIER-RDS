@@ -27,15 +27,16 @@ jobs:
         run: terraform validate
 
       - name: Terraform Plan
-        run: terraform plan
+        run: terraform plan -out=plan
 
       - name: Install terraform-docs
         run: |
           curl -sSL https://github.com/terraform-docs/terraform-docs/releases/download/v0.16.0/terraform-docs-v0.16.0-linux-amd64.tar.gz | tar -xz
           sudo mv terraform-docs /usr/local/bin/
 
-      - name: Generate Terraform Docs
-        run: terraform-docs markdown table . > README.md
+      - name: Show Terraform Plan
+        id: show-plan
+        run: terraform show plan > plan.txt
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
