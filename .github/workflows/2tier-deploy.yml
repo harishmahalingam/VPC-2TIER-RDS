@@ -37,7 +37,7 @@ jobs:
         run: terraform validate
 
       - name: Terraform Plan
-        run: terraform show -no-color plan.out > plan.txt
+        run: terraform show -out=plan.txt
 
       - name: Install terraform-docs
         run: |
@@ -46,7 +46,7 @@ jobs:
 
       - name: Show Terraform Plan in JSON
         run: |
-          terraform show -no-color plan.out > plan.txt
+          terraform show plan.out > plan.txt
           echo "## Terraform Plan" >> README.md
           cat plan.txt > README.md
 
