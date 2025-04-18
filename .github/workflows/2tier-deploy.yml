@@ -37,7 +37,7 @@ jobs:
         run: terraform validate
 
       - name: Terraform Plan
-        run: terraform plan -out=plan
+        run: terraform show -no-color plan.out > plan.txt
 
       - name: Install terraform-docs
         run: |
@@ -45,7 +45,11 @@ jobs:
           sudo mv $(go env GOPATH)/bin/terraform-docs /usr/local/bin/
 
       - name: Show Terraform Plan in JSON
-        run: terraform show -json plan > plan.json
+        run: |
+          terraform show -no-color plan.out > plan.txt
+          echo "## Terraform Plan" >> README.md
+          cat plan.txt > README.md
+
 
       - name: Convert JSON to Markdown
         run: |
