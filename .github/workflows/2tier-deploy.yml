@@ -43,9 +43,14 @@ jobs:
         run: |
           go install github.com/terraform-docs/terraform-docs@v0.17.0
           sudo mv $(go env GOPATH)/bin/terraform-docs /usr/local/bin/
-          
-      - name: Generate terraform-docs
-        run: terraform show plan > README.md
+
+      - name: Show Terraform Plan in JSON
+        run: terraform show -json plan > plan.json
+
+      - name: Convert JSON to Markdown
+        run: |
+          echo "## Terraform Plan" > README.md
+          jq -r '.resource_changes[] | "### \(.type)\n\n*Action*: \(.change.actions[0])\n*Name*: \(.name)\n*Address*: \(.address)\n*Change*: \(.change.after)\n"' plan.json >> README.md
 
       - name: Commit and push docs
         run: |
