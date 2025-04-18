@@ -38,12 +38,11 @@ jobs:
       - name: Terraform Plan
         run: terraform plan -no-color
 
+
       - name: Install terraform-docs
         run: |
-          curl -sSLo terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/latest/download/terraform-docs-v0.17.0-linux-amd64.tar.gz
-          tar -xzf terraform-docs.tar.gz
-          chmod +x terraform-docs
-          sudo mv terraform-docs /usr/local/bin/
+          go install github.com/terraform-docs/terraform-docs@v0.17.0
+          sudo mv $(go env GOPATH)/bin/terraform-docs /usr/local/bin/
 
       - name: Generate terraform-docs
         run: terraform-docs markdown table . > README.md
