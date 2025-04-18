@@ -37,24 +37,25 @@ jobs:
         run: terraform validate
 
       - name: Terraform Plan
-        run: terraform plan -out=plan.txt
+        run: terraform plan -out=plan.out
 
       - name: Install terraform-docs
         run: |
           go install github.com/terraform-docs/terraform-docs@v0.17.0
           sudo mv $(go env GOPATH)/bin/terraform-docs /usr/local/bin/
 
-      - name: Show Terraform Plan in JSON
+      - name: Show Terraform Plan
         run: |
-          terraform show plan.out > plan.txt
-          echo "## Terraform Plan" >> README.md
-          cat plan.txt > README.md
-
-
-      - name: Convert JSON to Markdown
-        run: |
+          terraform show -json plan.out > plan.json
           echo "## Terraform Plan" > README.md
           jq -r '.resource_changes[] | "### \(.type)\n\n*Action*: \(.change.actions[0])\n*Name*: \(.name)\n*Address*: \(.address)\n*Change*: \(.change.after)\n"' plan.json >> README.md
+
+      - name: Add Plan Summary to README.md
+        run: |
+          add=$(jq '.resource_changes | map(select(.change.actions[0] == "create")) | length' plan.json)
+          change=$(jq '.resource_changes | map(select(.change.actions[0] == "update")) | length' plan.json)
+          destroy=$(jq '.resource_changes | map(select(.change.actions[0] == "delete")) | length' plan.json)
+          echo "Plan: $add to add, $change to change, $destroy to destroy" >> README.md
 
       - name: Commit and push docs
         run: |
