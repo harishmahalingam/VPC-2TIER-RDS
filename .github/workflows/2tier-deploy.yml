@@ -37,7 +37,7 @@ jobs:
         run: terraform validate
 
       - name: Terraform Plan
-        run: terraform show -out=plan.txt
+        run: terraform plan -out=plan.txt
 
       - name: Install terraform-docs
         run: |
